@@ -4,19 +4,19 @@ CandidateForge is a robust, front-end heavy MERN-stack application (simulating a
 
 In the real world, HR candidate profiles consist of structured data (JSON/CSV), Resume PDFs, and social media links (GitHub/LinkedIn). CandidateForge extracts, normalizes, resolves conflicts, and securely aggregates these disparate data points into a perfectly validated and cleanly formatted JSON payload ready for database storage.
 
-## 📑 Table of Contents
-- [System Architecture Overview](#-system-architecture-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Getting Started (Local setup implementation)](#-getting-started-local-setup-implementation)
-- [Application Walkthrough & Screens](#-application-walkthrough--screens)
-- [Automated Edge-Case Validation](#-automated-edge-case-validation)
-- [How to Test This Application](#-how-to-test-this-application)
-- [Video Explanation](#-video-explanation)
+## Table of Contents
+- [System Architecture Overview](#system-architecture-overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started (Local setup implementation)](#getting-started-local-setup-implementation)
+- [Application Walkthrough & Screens](#application-walkthrough--screens)
+- [Automated Edge-Case Validation](#automated-edge-case-validation)
+- [How to Test This Application](#how-to-test-this-application)
+- [Video Explanation](#video-explanation)
 
 ---
 
-## 🏛 System Architecture Overview
+## System Architecture Overview
 
 CandidateForge employs a sophisticated **10-Stage Transformation Pipeline**. The entire mechanism is fully transparent and tracks provenance (where every piece of data originated) and calculates confidence scores for absolute reliability.
 
@@ -61,7 +61,7 @@ flowchart LR
 
 ---
 
-## ✨ Features
+## Features
 
 - **Source Priority Resolution:** If two sources conflict (e.g., Job Title on Resume vs GitHub), the Conflict Resolver picks the winner based on a strict priority hierarchy (e.g., `Structured Data > GitHub > Resume`).
 - **Confidence Scoring:** Validates cross-source agreement. If both Resume and GitHub claim a candidate knows "React", the confidence score automatically increases.
@@ -71,7 +71,7 @@ flowchart LR
 
 ---
 
-## 💻 Tech Stack
+## Tech Stack
 
 - **Frontend:** React.js, TailwindCSS, Framer Motion (for dynamic wizard animations)
 - **Backend Simulation (Pipeline):** Modular JavaScript pipeline architecture, PDF.js (for local document parsing)
@@ -80,7 +80,7 @@ flowchart LR
 
 ---
 
-## 🛠 Getting Started (Local setup implementation)
+## Getting Started (Local setup implementation)
 
 Follow these instructions to run the application locally on your machine.
 
@@ -111,7 +111,7 @@ Follow these instructions to run the application locally on your machine.
 
 ---
 
-## 🖥 Application Walkthrough & Screens
+## Application Walkthrough & Screens
 
 CandidateForge provides a beautifully designed 5-step wizard to guide users through the pipeline execution.
 
@@ -141,7 +141,7 @@ The finalized Canonical Profile is presented with 100% transparency. The UI incl
 
 ---
 
-## 🧪 Automated Edge-Case Validation
+## Automated Edge-Case Validation
 
 To prove the pipeline is production-ready, CandidateForge includes an automated Validation Test suite.
 You can view this at the `/validation` route. It validates against:
@@ -153,7 +153,7 @@ You can view this at the `/validation` route. It validates against:
 
 ---
 
-## 🚀 How to Test This Application
+## How to Test This Application
 
 To test the application locally, you can use the provided sample inputs:
 
@@ -164,7 +164,7 @@ To test the application locally, you can use the provided sample inputs:
 
 ---
 
-## 🎥 Video Explanation
+## Video Explanation
 
 For a full guided walkthrough of the backend architecture, the pipeline codebase, and the frontend wizard UI, please watch the explanation video below:
 
@@ -176,8 +176,9 @@ For a full guided walkthrough of the backend architecture, the pipeline codebase
 
 ---
 
-## 📫 Contact Me
+## Contact Me
 
+- **Portfolio:** [prajinkumar-portfolio.vercel.app](https://prajinkumar-portfolio.vercel.app/)
 - **LinkedIn:** [prajinkumar1910](https://linkedin.com/in/prajinkumar1910)
 - **GitHub:** [prajin1910](https://github.com/prajin1910)
 - **Email:** [prajinkumar2020@gmail.com](mailto:prajinkumar2020@gmail.com)
