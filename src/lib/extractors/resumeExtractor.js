@@ -109,7 +109,7 @@ export async function extractFromResumePDF(pdfFile) {
 
   // Try server-side backend first, fall back to client-side extraction
   try {
-    const { appClient } = await import('@/api/base44Client');
+    const { appClient } = await import('@/api/appClient');
 
     const uploadResult = await appClient.integrations.Core.UploadFile({ file: pdfFile });
     const fileUrl = uploadResult.file_url;
