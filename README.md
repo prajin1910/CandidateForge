@@ -4,16 +4,29 @@ CandidateForge is a robust, front-end heavy MERN-stack application (simulating a
 
 In the real world, HR candidate profiles consist of structured data (JSON/CSV), Resume PDFs, and social media links (GitHub/LinkedIn). CandidateForge extracts, normalizes, resolves conflicts, and securely aggregates these disparate data points into a perfectly validated and cleanly formatted JSON payload ready for database storage.
 
+## 📑 Table of Contents
+- [System Architecture Overview](#-system-architecture-overview)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Getting Started (Local setup implementation)](#-getting-started-local-setup-implementation)
+- [Application Walkthrough & Screens](#-application-walkthrough--screens)
+- [Automated Edge-Case Validation](#-automated-edge-case-validation)
+- [How to Test This Application](#-how-to-test-this-application)
+- [Video Explanation](#-video-explanation)
+
 ---
 
-## 🛠 Architecture & Working Logic (Core Mechanisms)
+## 🏛 System Architecture Overview
 
 CandidateForge employs a sophisticated **10-Stage Transformation Pipeline**. The entire mechanism is fully transparent and tracks provenance (where every piece of data originated) and calculates confidence scores for absolute reliability.
 
-### The 10-Stage Transformation Pipeline Diagram
+*To save space, the full pipeline diagram is collapsed below. Click to expand!*
+
+<details>
+<summary><b>Click here to view the 10-Stage Transformation Pipeline Diagram</b></summary>
 
 ```mermaid
-flowchart TD
+flowchart LR
     A[Raw Inputs] --> B[1. Config Loader]
     B --> C[2. Source Detection]
     C --> D[3. Parallel Extraction]
@@ -38,16 +51,63 @@ flowchart TD
     I --> J[8. Provenance Builder]
     J --> K[9. Canonical Profile Builder]
     K --> L[10. Schema Validation & Projection]
-    L --> M[Final Canonical JSON Payload]
+    L --> M[Final Canonical Payload]
     
     style H fill:#f96,stroke:#333,stroke-width:2px
     style I fill:#f96,stroke:#333,stroke-width:2px
 ```
 
-### Core Features
+</details>
+
+---
+
+## ✨ Features
+
 - **Source Priority Resolution:** If two sources conflict (e.g., Job Title on Resume vs GitHub), the Conflict Resolver picks the winner based on a strict priority hierarchy (e.g., `Structured Data > GitHub > Resume`).
-- **Confidence Scoring:** Validates cross-source agreement. If both Resume and GitHub claim a candidate knows "React", the confidence score increases.
-- **Normalization:** Raw "Jan 2023" becomes strict `2023-01-01T00:00:00.000Z`. "reactJS" becomes "React".
+- **Confidence Scoring:** Validates cross-source agreement. If both Resume and GitHub claim a candidate knows "React", the confidence score automatically increases.
+- **Data Normalization:** Messy raw data like "Jan 2023" becomes strict `2023-01-01T00:00:00.000Z`. "reactJS" becomes a canonical "React".
+- **Provenance Tracking:** Every single field in the final output includes a transparent trace back to its origin file or API.
+- **Dynamic Extractor Pipeline:** Easily plug in new data sources like PDF, GitHub API, or raw JSON inputs.
+
+---
+
+## 💻 Tech Stack
+
+- **Frontend:** React.js, TailwindCSS, Framer Motion (for dynamic wizard animations)
+- **Backend Simulation (Pipeline):** Modular JavaScript pipeline architecture, PDF.js (for local document parsing)
+- **State Management:** React Context API / Custom Hooks
+- **Tooling:** Vite, Node.js
+
+---
+
+## 🛠 Getting Started (Local setup implementation)
+
+Follow these instructions to run the application locally on your machine.
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or higher recommended)
+- Git installed on your local machine
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/prajin1910/CandidateForge.git
+   cd CandidateForge
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open the Application:**
+   Open your browser and navigate to `http://localhost:5173` (or the port provided in your terminal).
 
 ---
 
