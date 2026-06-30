@@ -2,14 +2,11 @@
  * Resume Extractor
  *
  * Two extraction paths:
- *   1. Base44 backend (primary) — UploadFile + ExtractDataFromUploadedFile
+ *   1. Server-side backend (primary) — UploadFile + ExtractDataFromUploadedFile
  *   2. Client-side PDF.js fallback — extracts raw text from PDF and parses it
  *      using section-based extractFromResumeText()
  *
- * The fallback is used automatically when Base44 is not available (e.g., running
- * with `npm run dev` without `base44 dev`).
- *
- * Returns a RawSourcePayload.
+ * The fallback is used automatically when the server backend is not available.
  */
 
 const RESUME_SCHEMA = {
@@ -110,14 +107,14 @@ export async function extractFromResumePDF(pdfFile) {
     throw new Error('PDF file is required');
   }
 
-  // Try Base44 backend first, fall back to client-side extraction
+  // Try server-side backend first, fall back to client-side extraction
   try {
-    const { base44 } = await import('@/api/base44Client');
+    const { appClient } = await import('@/api/base44Client');
 
-    const uploadResult = await base44.integrations.Core.UploadFile({ file: pdfFile });
+    const uploadResult = await appClient.integrations.Core.UploadFile({ file: pdfFile });
     const fileUrl = uploadResult.file_url;
 
-    const extractResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
+    const extractResult = await appClient.integrations.Core.ExtractDataFromUploadedFile({
       file_url: fileUrl,
       json_schema: RESUME_SCHEMA,
     });
@@ -135,12 +132,12 @@ export async function extractFromResumePDF(pdfFile) {
       sourceName: pdfFile.name || 'resume.pdf',
       rawFields,
       extractedAt: new Date().toISOString(),
-      extractorVersion: 'resumeExtractor@2.0-base44',
+      extractorVersion: 'resumeExtractor@2.0',
     };
-  } catch (base44Error) {
+  } catch (serverError) {
     console.warn(
-      'Base44 backend not available for resume extraction. Using client-side PDF text extraction fallback.',
-      base44Error.message
+      'Server backend not available for resume extraction. Using client-side PDF text extraction fallback.',
+      serverError.message
     );
 
     try {
