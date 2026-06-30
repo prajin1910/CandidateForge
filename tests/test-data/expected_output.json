@@ -1,0 +1,42 @@
+{
+  "full_name": "Prajin Kumar",
+  "primary_email": "prajinkumar2020@gmail.com",
+  "primary_phone": "+919876543210",
+  "location": {
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "country": "IN"
+  },
+  "headline": "Associate Software Engineer",
+  "summary": "Passionate developer focused on building scalable backend solutions.",
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "React",
+    "Docker"
+  ],
+  "core_subjects": [],
+  "experience": [
+    {
+      "company": "PwC",
+      "title": "Associate Software Engineer",
+      "startDate": "2023-01-01T00:00:00.000Z",
+      "endDate": "Present",
+      "description": "Developed backend microservices."
+    }
+  ],
+  "education": [
+    {
+      "institution": "St. Joseph's Institute of Technology",
+      "degree": "B.E Computer Science and Engineering",
+      "startDate": "2018-01-01T00:00:00.000Z",
+      "endDate": "2022-01-01T00:00:00.000Z"
+    }
+  ],
+  "links": [
+    {
+      "type": "github",
+      "url": "https://github.com/Prajin-2001"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "full_name": "Prajin Kumar P",
+  "email": "prajinkumar2020@gmail.com",
+  "phone": "+91 9025469369",
+  "location": {
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "country": "India"
+  },
+  "current_company": "PwC",
+  "job_title": "Associate Software Engineer",
+  "experience_years": 2.5,
+  "skills": [
+    "Java",
+    "Spring Boot",
+    "React",
+    "Node.js",
+    "MongoDB",
+    "Docker",
+    "Git"
+  ],
+  "education": [
+    {
+      "institution": "St. Joseph's Institute of Technology",
+      "degree": "B.E Computer Science and Engineering",
+      "graduation_year": 2027
+    }
+  ],
+  "github_url": "https://github.com/prajin1910",
+  "linkedin_url": "https://linkedin.com/prajinkumar19"
+}
