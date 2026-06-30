@@ -6,6 +6,7 @@ In the real world, HR candidate profiles consist of structured data (JSON/CSV), 
 
 ## Table of Contents
 - [System Architecture Overview](#system-architecture-overview)
+- [Deep Dive: Core Pipeline Logic](#deep-dive-core-pipeline-logic)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started (Local setup implementation)](#getting-started-local-setup-implementation)
@@ -13,6 +14,7 @@ In the real world, HR candidate profiles consist of structured data (JSON/CSV), 
 - [Automated Edge-Case Validation](#automated-edge-case-validation)
 - [How to Test This Application](#how-to-test-this-application)
 - [Video Explanation](#video-explanation)
+- [Contact Me](#contact-me)
 
 ---
 
@@ -61,22 +63,62 @@ flowchart LR
 
 ---
 
+## Deep Dive: Core Pipeline Logic
+
+To truly understand CandidateForge, you must look under the hood. The application simulates complex backend ETL (Extract, Transform, Load) logic entirely within the client-side architecture.
+
+### 1. Extractor Engines
+The pipeline begins by fanning out to specialized extractors based on the detected input types:
+- **Structured JSON Extractor:** Parses standard HR data payloads.
+- **GitHub API Extractor:** Automatically fires REST calls to `api.github.com` to fetch live repository data, primary languages, and profile metadata.
+- **PDF Resume Extractor:** Utilizes `pdf.js` to parse raw buffer data from uploaded resumes into readable text chunks.
+
+### 2. The Normalization Engine
+Raw data is rarely clean. The normalizers sanitize data before it hits the conflict resolver:
+- **Temporal Normalization:** Dates like `Jan 2023`, `01/23`, and `2023-01-01` are uniformly converted into strict ISO-8601 timestamps (`2023-01-01T00:00:00.000Z`).
+- **Telecom Normalization:** Phone numbers strip out spaces and local prefixes, converting them to strict `E.164` international formats (e.g., `+919876543210`).
+- **Taxonomy Canonicalization:** Arrays of skills (e.g., `["ReactJS", "react", "JAVA"]`) are forcefully lowercased, stripped of special characters, and deduplicated into a canonical set (`["react", "java"]`).
+
+### 3. Conflict Resolution Strategy
+When multiple sources provide the same piece of information (e.g., the JSON says the candidate's title is "Developer", but their Resume says "Senior Engineer"), the system must decide which to trust.
+- The user defines a **Source Priority Hierarchy** (e.g., `Resume > GitHub > Structured Data`).
+- The engine iterates through the priority list. It selects the highest-priority source that actually contains a valid, non-null value for that specific field.
+
+### 4. Confidence Scoring Algorithm
+CandidateForge calculates a mathematical "Trust Score" for every single data point.
+- **Base Score:** A value extracted from a single source starts with a baseline confidence (e.g., `0.7`).
+- **Cross-Validation Bonus:** If *multiple* sources independently agree on the same value (e.g., both the Resume and the JSON list "Docker" as a skill), the system mathematically boosts the confidence score up to a maximum of `1.0`.
+
+### 5. Provenance Mapping
+Data without a verifiable trail is dangerous. CandidateForge attaches a "Provenance Metadata Object" to every finalized field. Instead of just returning `"Chennai"`, the engine returns:
+```json
+{
+  "value": "Chennai",
+  "source": "resume",
+  "confidence": 0.85,
+  "timestamp": "2026-06-30T10:00:00Z"
+}
+```
+This guarantees 100% transparency for downstream systems.
+
+---
+
 ## Features
 
-- **Source Priority Resolution:** If two sources conflict (e.g., Job Title on Resume vs GitHub), the Conflict Resolver picks the winner based on a strict priority hierarchy (e.g., `Structured Data > GitHub > Resume`).
-- **Confidence Scoring:** Validates cross-source agreement. If both Resume and GitHub claim a candidate knows "React", the confidence score automatically increases.
-- **Data Normalization:** Messy raw data like "Jan 2023" becomes strict `2023-01-01T00:00:00.000Z`. "reactJS" becomes a canonical "React".
-- **Provenance Tracking:** Every single field in the final output includes a transparent trace back to its origin file or API.
-- **Dynamic Extractor Pipeline:** Easily plug in new data sources like PDF, GitHub API, or raw JSON inputs.
+- **Dynamic Pipeline Configuration:** Users can toggle individual normalizers, adjust missing-value behaviors, and reorder priority hierarchies on the fly.
+- **Live Output Telemetry:** Real-time visual logs stream into the UI as the pipeline transitions from extraction to normalization to aggregation.
+- **Visual Confidence Badges:** The final Output Screen color-codes data points based on their mathematical confidence scores.
+- **Automated Fallbacks:** If the GitHub API rate-limits the request or a PDF is entirely blank, the pipeline intelligently skips the source without crashing, falling back to lower-priority data.
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** React.js, TailwindCSS, Framer Motion (for dynamic wizard animations)
-- **Backend Simulation (Pipeline):** Modular JavaScript pipeline architecture, PDF.js (for local document parsing)
-- **State Management:** React Context API / Custom Hooks
-- **Tooling:** Vite, Node.js
+- **Frontend Core:** React.js, TailwindCSS
+- **Animations & Transitions:** Framer Motion (used for the seamless 5-step wizard and dynamic logs)
+- **Data Parsing:** `pdf.js` (for complex document extraction)
+- **State Architecture:** React Context API combined with heavily modularized Custom Hooks to separate UI logic from Pipeline execution.
+- **Development Tooling:** Vite, Node.js
 
 ---
 
