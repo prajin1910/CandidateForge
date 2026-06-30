@@ -108,4 +108,6 @@ To test the application locally, you can use the provided sample inputs:
 
 For a full guided walkthrough of the backend architecture, the pipeline codebase, and the frontend wizard UI, please watch the explanation video below:
 
-https://github.com/prajin1910/CandidateForge/raw/main/imagesVideo/VideoExplain.mp4
+<video width="100%" controls>
+  <source src="imagesVideo/VideoExplain.mp4" type="video/mp4">
+</video>
