@@ -173,3 +173,11 @@ For a full guided walkthrough of the backend architecture, the pipeline codebase
     <img src="https://img.youtube.com/vi/C3RhpsFPYY4/0.jpg" alt="CandidateForge Video Explanation" width="800" style="border-radius: 10px;">
   </a>
 </div>
+
+---
+
+## 📫 Contact Me
+
+- **LinkedIn:** [prajinkumar1910](https://linkedin.com/in/prajinkumar1910)
+- **GitHub:** [prajin1910](https://github.com/prajin1910)
+- **Email:** [prajinkumar2020@gmail.com](mailto:prajinkumar2020@gmail.com)
