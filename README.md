@@ -110,6 +110,6 @@ For a full guided walkthrough of the backend architecture, the pipeline codebase
 
 <div align="left">
   <a href="https://youtu.be/C3RhpsFPYY4">
-    <img src="https://img.youtube.com/vi/C3RhpsFPYY4/hqdefault.jpg" alt="CandidateForge Video Explanation" width="800" style="border-radius: 10px;">
+    <img src="https://img.youtube.com/vi/C3RhpsFPYY4/0.jpg" alt="CandidateForge Video Explanation" width="800" style="border-radius: 10px;">
   </a>
 </div>
