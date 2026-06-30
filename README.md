@@ -106,6 +106,6 @@ To test the application locally, you can use the provided sample inputs:
 
 ## 🎥 Video Explanation
 
-For a full guided walkthrough of the backend architecture, the pipeline codebase, and the frontend wizard UI, please download the explanation video below. *(Note: Due to the high-quality 380+ MB file size, GitHub requires downloading the video to view it).*
+For a full guided walkthrough of the backend architecture, the pipeline codebase, and the frontend wizard UI, please watch the explanation video below:
 
-### 🎥 [Download the Full Video Walkthrough Here!](https://github.com/prajin1910/CandidateForge/raw/main/imagesVideo/VideoExplain.mp4)
+https://github.com/prajin1910/CandidateForge/raw/main/imagesVideo/VideoExplain.mp4
