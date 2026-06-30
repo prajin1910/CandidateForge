@@ -9,7 +9,7 @@
 
     @page {
       size: A4 portrait;
-      margin: 14mm 10mm 12mm 10mm;
+      margin:6mm 4mm 1mm 4mm;
     }
 
     html, body {
@@ -32,7 +32,7 @@
     }
 
     h1 {
-      font-size: 16pt;
+      font-size: 12pt;
       font-weight: bold;
       letter-spacing: 0.3px;
       margin-bottom: 2px;
@@ -156,11 +156,21 @@
 </head>
 <body>
 
+  <!-- Title -->
+  <div class="title-block">
+    <h1>CandidateForge - Multi-Source Candidate Data Transformer &amp; Canonical Profile Builder</h1>
+    <div class="subtitle" style="font-style: normal; color: #000; margin-top: 4px; margin-bottom: 2px;">
+      Prajin Kumar P - prajinkumar2020@gmail.com - linkedin.com/prajinkumar1910
+    </div>
+    <div class="subtitle" style="font-style: normal; color: #000; margin-bottom: 4px;">
+      Live Demo: <strong>candidateforge.vercel.app</strong> &nbsp;-&nbsp; Source: <strong>github.com/prajin1910/CandidateForge</strong>
+    </div>
+  </div>
 
   <!-- Abstract (full width) -->
   <h2>Abstract</h2>
   <p>
-    CandidateForge is a browser-native ETL (Extract, Transform, Load) application built with React.js that consolidates fragmented candidate data from multiple sources into a single, mathematically verified <strong>Canonical Profile</strong>. In modern HR workflows, candidate information is spread across structured ATS databases (JSON/CSV), uploaded résumé documents (PDF), and live developer profiles (GitHub). CandidateForge extracts data from all three sources in parallel, normalises every field to strict international standards, resolves conflicts using a user-defined priority hierarchy, and attaches confidence scores and full provenance metadata to each field. The entire pipeline runs client-side with zero backend dependency, powered by the GitHub REST API and a pdf.js WASM worker for document parsing.
+    CandidateForge is a browser-native ETL (Extract, Transform, Load) application built with React.js that consolidates fragmented candidate data from multiple sources into a single, mathematically verified <strong>Canonical Profile</strong>. In modern HR workflows, candidate information is spread across structured ATS databases (JSON/CSV), uploaded resume documents (PDF), and live developer profiles (GitHub). CandidateForge extracts data from all three sources in parallel, normalises every field to strict international standards, resolves conflicts using a user-defined priority hierarchy, and attaches confidence scores and full provenance metadata to each field. The entire pipeline runs client-side with zero backend dependency, powered by the GitHub REST API and a pdf.js WASM worker for document parsing.
   </p>
 
   <!-- Workflow Diagram -->
@@ -175,7 +185,7 @@
 
     <!-- PDF box -->
     <rect x="2" y="41" width="80" height="22" rx="3" fill="none" stroke="#000" stroke-width="1"/>
-    <text x="42" y="56" font-size="8" text-anchor="middle" font-family="Georgia,serif">PDF Résumé</text>
+    <text x="42" y="56" font-size="8" text-anchor="middle" font-family="Georgia,serif">PDF Resume</text>
 
     <!-- GitHub box -->
     <rect x="2" y="72" width="80" height="22" rx="3" fill="none" stroke="#000" stroke-width="1"/>
@@ -251,7 +261,7 @@
 
       <h2>Problem Statement</h2>
       <p>
-        Organisations manage candidate profiles across disconnected systems — ATS databases (JSON/CSV), uploaded PDF résumés, and GitHub developer profiles. Merging these manually is error-prone, leading to duplicated and inconsistent records. CandidateForge automates this process deterministically through a structured pipeline.
+        Organisations manage candidate profiles across disconnected systems — ATS databases (JSON/CSV), uploaded PDF resumes, and GitHub developer profiles. Merging these manually is error-prone, leading to duplicated and inconsistent records. CandidateForge automates this process deterministically through a structured pipeline.
       </p>
 
       <h2>10-Stage Transformation Pipeline</h2>
@@ -283,14 +293,19 @@
         </tbody>
       </table>
 
+      <h2>Key Features</h2>
+      <ul class="bullets" style="margin-bottom: 0;">
+        <li style="margin-bottom: 0;"><strong>Parallel Extraction</strong> — GitHub REST API, pdf.js WASM worker,</li>
+      </ul>
+
     </div>
 
     <!-- RIGHT -->
     <div>
-
-      <h2>Key Features</h2>
+      <div style="font-size: 8.8pt; line-height: 1.5; margin-bottom: 2px; padding-left: 14px; margin-top: 13px;">
+        and JSON parser execute concurrently in the browser event loop.
+      </div>
       <ul class="bullets">
-        <li><strong>Parallel Extraction</strong> — GitHub REST API, pdf.js WASM worker, and JSON parser execute concurrently in the browser event loop.</li>
         <li><strong>Conflict Resolution Engine</strong> — drag-and-drop source priority hierarchy; field-level winner selection is deterministic.</li>
         <li><strong>Confidence Scoring</strong> — trust score per field: 0.70 (single source) up to 1.0 (all sources agree).</li>
         <li><strong>Full Provenance Chain</strong> — every output field carries <code>{ value, source, confidence, timestamp }</code>.</li>
