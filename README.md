@@ -8,6 +8,7 @@ In the real world, HR candidate profiles consist of structured data (JSON/CSV), 
 
 ## Table of Contents
 - [System Architecture Overview](#system-architecture-overview)
+- [Component Communication & Data Flow](#component-communication--data-flow)
 - [Deep Dive: Core Pipeline Logic](#deep-dive-core-pipeline-logic)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -62,6 +63,299 @@ flowchart LR
 ```
 
 </details>
+
+---
+
+## Component Communication & Data Flow
+
+This section maps **how every module communicates with every other module** across all layers of the application — from the UI wizard through to external APIs.
+
+### 1. System Layer Overview
+
+The application is split into four distinct responsibility layers. Data only flows downward (UI → Hook → Service → Libraries).
+
+```mermaid
+block-beta
+  columns 1
+  block:UI["🖥️  UI Layer (React Components)"]
+    columns 3
+    A["TransformPage\n(Wizard Orchestrator)"]
+    B["WizardStepper\n(Step Indicator)"]
+    C["OutputPanel\n(Results Display)"]
+  end
+  space
+  block:STATE["🔗  State Layer (React Hook)"]
+    columns 1
+    D["useTransform Hook\n(status / result / pipelineLog / error)"]
+  end
+  space
+  block:PIPELINE["⚙️  Pipeline Layer (Business Logic)"]
+    columns 4
+    E["transformService"]
+    F["sourceDetector"]
+    G["sourceAggregator"]
+    H["conflictResolver"]
+  end
+  space
+  block:LIB["📦  Library Layer (Utility Modules)"]
+    columns 4
+    I["Extractors"]
+    J["Normalizers"]
+    K["Validators"]
+    L["Projection"]
+  end
+
+  A --> D
+  D --> E
+  E --> F
+  E --> G
+  E --> H
+  E --> I
+  E --> J
+  E --> K
+  E --> L
+  E --> C
+```
+
+---
+
+### 2. Full Component-to-Component Communication Flow
+
+This diagram shows the precise message/data passing between every React component and module.
+
+```mermaid
+flowchart TD
+    subgraph Browser["🌐 Browser (Client-Side)"]
+        subgraph UI["UI Layer"]
+            Main["main.jsx\n<i>App Entry Point</i>"]
+            App["App.jsx\n<i>Router + QueryClientProvider</i>"]
+            TP["TransformPage.jsx\n<i>Wizard State Orchestrator</i>"]
+            VP["ValidationTests.jsx\n<i>Edge-Case Test Runner</i>"]
+
+            subgraph Wizard["Wizard Step Components"]
+                S1["Step1Structured\n<i>JSON/CSV File Upload</i>"]
+                S2["Step2SourceSelect\n<i>Source Type Picker</i>"]
+                S3["Step3SourceInput\n<i>GitHub URL / PDF Drop</i>"]
+                S4["Step4Config\n<i>Pipeline Config Editor</i>"]
+                S5["Step5Transform\n<i>Pipeline Trigger + Log Stream</i>"]
+                WZ["WizardStepper\n<i>Step Progress Indicator</i>"]
+            end
+
+            subgraph Output["Output Components"]
+                OP["OutputPanel"]
+                SC["SummaryCard"]
+                JV["JsonViewer"]
+                CB["ConfidenceBar"]
+                SB["SourceBadge"]
+                CE["ConfidenceExplanation"]
+            end
+
+            subgraph Shared["Shared UI Components"]
+                FD["FileDropzone"]
+                LS["LoadingSpinner"]
+                ED["ErrorDisplay"]
+            end
+        end
+
+        subgraph Hook["State Layer"]
+            UT["useTransform Hook\n<i>status / result / error / pipelineLog</i>"]
+        end
+
+        subgraph PipelineLib["Pipeline Service Layer"]
+            TS["transformService.js\n<i>Orchestrates all pipeline stages</i>"]
+            SD["sourceDetector.js\n<i>Detects input types</i>"]
+            SA["sourceAggregator.js\n<i>Merges extracted data</i>"]
+            CR["conflictResolver.js\n<i>Applies priority rules</i>"]
+            CC["confidenceCalculator.js\n<i>Scores each field</i>"]
+            PB["provenanceBuilder.js\n<i>Attaches source metadata</i>"]
+            CB2["canonicalBuilder.js\n<i>Assembles final profile</i>"]
+        end
+
+        subgraph Extractors["Extractor Modules"]
+            GE["githubExtractor.js"]
+            RE["resumeExtractor.js\n<i>pdf.js</i>"]
+            LE["linkedinStubExtractor.js"]
+        end
+
+        subgraph Normalizers["Normalizer Modules"]
+            DN["dateNormalizer.js\n<i>→ ISO-8601</i>"]
+            PN["phoneNormalizer.js\n<i>→ E.164</i>"]
+            SN["skillNormalizer.js\n<i>→ Canonical Set</i>"]
+            EN["emailNormalizer.js"]
+            LN["locationNormalizer.js"]
+            CN["countryNormalizer.js"]
+        end
+
+        subgraph Validators["Validation & Projection"]
+            SV["schemaValidator.js"]
+            PE["projectionEngine.js"]
+        end
+    end
+
+    subgraph External["🌍 External APIs"]
+        GH["api.github.com\n<i>REST API</i>"]
+        PDFJS["pdf.js\n<i>In-Browser WASM Worker</i>"]
+    end
+
+    Main -->|"renders"| App
+    App -->|"/ route"| TP
+    App -->|"/validation route"| VP
+
+    TP -->|"step state + wizardData"| WZ
+    TP -->|"data + update()"| S1
+    TP -->|"data + update()"| S2
+    TP -->|"data + update()"| S3
+    TP -->|"data + update()"| S4
+    TP -->|"data + onTransform()"| S5
+    TP -->|"calls transform(inputs)"| UT
+    TP -->|"result / error / status"| OP
+
+    S3 -->|"PDF file drop"| FD
+    S5 -->|"pipelineLog stream"| LS
+
+    OP --> SC
+    OP --> JV
+    OP --> CB
+    OP --> SB
+    OP --> CE
+    OP -->|"on error"| ED
+
+    UT -->|"async call"| TS
+    UT -->|"onProgress callback → pipelineLog"| S5
+
+    TS -->|"detect sources"| SD
+    TS -->|"fan-out extraction"| GE
+    TS -->|"fan-out extraction"| RE
+    TS -->|"fan-out extraction"| LE
+    TS -->|"normalize fields"| DN
+    TS -->|"normalize fields"| PN
+    TS -->|"normalize fields"| SN
+    TS -->|"normalize fields"| EN
+    TS -->|"normalize fields"| LN
+    TS -->|"normalize fields"| CN
+    TS -->|"merge sources"| SA
+    TS -->|"resolve conflicts"| CR
+    TS -->|"score fields"| CC
+    TS -->|"attach provenance"| PB
+    TS -->|"build profile"| CB2
+    TS -->|"validate schema"| SV
+    TS -->|"project fields"| PE
+
+    GE -->|"HTTP GET repos/user/languages"| GH
+    RE -->|"parseAsync buffer"| PDFJS
+
+    style GH fill:#24292e,color:#fff,stroke:#555
+    style PDFJS fill:#e44d26,color:#fff,stroke:#c0392b
+    style TS fill:#2563eb,color:#fff,stroke:#1d4ed8
+    style UT fill:#7c3aed,color:#fff,stroke:#5b21b6
+    style TP fill:#0f766e,color:#fff,stroke:#0d9488
+```
+
+---
+
+### 3. External API Communication
+
+CandidateForge communicates with two external services entirely from the browser (no backend server required).
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as TransformPage (UI)
+    participant Hook as useTransform Hook
+    participant TS as transformService
+    participant GE as githubExtractor
+    participant RE as resumeExtractor
+    participant GH as api.github.com
+    participant PDF as pdf.js Worker
+
+    User->>UI: Clicks "Transform"
+    UI->>Hook: transform(inputs)
+    Hook->>TS: transformCandidate({ structuredFile, sourceType, sourceUrl, pdfFile, config })
+
+    Note over TS: Stage 1 — Source Detection
+    TS->>TS: sourceDetector.detect(inputs)
+
+    Note over TS: Stage 2 — Parallel Extraction
+    par GitHub Extraction
+        TS->>GE: extract(sourceUrl, token)
+        GE->>GH: GET /users/{username}/repos
+        GH-->>GE: repo list JSON
+        GE->>GH: GET /repos/{owner}/{repo}/languages
+        GH-->>GE: language stats JSON
+        GE-->>TS: Structured GitHub Profile
+    and PDF Extraction
+        TS->>RE: extract(pdfFile)
+        RE->>PDF: pdfjsLib.getDocument(buffer)
+        PDF-->>RE: page text chunks
+        RE-->>TS: Parsed Resume Text
+    end
+
+    Note over TS: Stage 3 — Normalisation
+    TS->>TS: normalizeAll(rawData) — Dates, Phones, Skills, Email, Location
+
+    Note over TS: Stage 4 — Aggregation & Conflict Resolution
+    TS->>TS: sourceAggregator.merge(sources)
+    TS->>TS: conflictResolver.resolve(aggregated, priorityOrder)
+
+    Note over TS: Stage 5 — Scoring & Provenance
+    TS->>TS: confidenceCalculator.score(fields)
+    TS->>TS: provenanceBuilder.build(fields)
+
+    Note over TS: Stage 6 — Build & Validate
+    TS->>TS: canonicalBuilder.build(scored)
+    TS->>TS: schemaValidator.validate(canonical)
+    TS->>TS: projectionEngine.project(canonical)
+
+    TS-->>Hook: { success, canonical, conflicts, provenance, log }
+    Hook-->>UI: { status: 'success', result, pipelineLog }
+    UI->>User: Renders OutputPanel with Canonical Profile
+```
+
+---
+
+### 4. State Management & Data Flow
+
+This shows exactly what data is passed between the React state containers and how `wizardData` flows through all wizard steps before being passed to the pipeline.
+
+```mermaid
+flowchart LR
+    subgraph WizardState["React State in TransformPage"]
+        WD["wizardData\n──────────────────\nfileContent\nfileName\nsourceType: github|pdf\nsourceUrl\ngithubToken\npdfFile\npdfFileName\nconfig: { normalizers, conflictStrategy, priorityOrder }"]
+    end
+
+    subgraph Steps["Wizard Steps — Read & Update wizardData"]
+        S1["Step 1\nUploads JSON/CSV\n→ writes fileContent, fileName"]
+        S2["Step 2\nPicks source type\n→ writes sourceType"]
+        S3["Step 3\nProvides URL or PDF\n→ writes sourceUrl / pdfFile"]
+        S4["Step 4\nEdits pipeline config\n→ writes config object"]
+        S5["Step 5\nReads all data\n→ triggers transform"]
+    end
+
+    subgraph HookState["useTransform Hook State"]
+        ST["status: idle|loading|success|error"]
+        RS["result: { canonical, conflicts, provenance }"]
+        ER["error: { message, details }"]
+        PL["pipelineLog: LogEntry[]"]
+    end
+
+    WD --> S1
+    WD --> S2
+    WD --> S3
+    WD --> S4
+    WD --> S5
+
+    S1 -->|"update({ fileContent, fileName })"| WD
+    S2 -->|"update({ sourceType })"| WD
+    S3 -->|"update({ sourceUrl / pdfFile })"| WD
+    S4 -->|"update({ config })"| WD
+    S5 -->|"transform(wizardData) →"| HookState
+
+    HookState -->|"pipelineLog stream"| S5
+    HookState -->|"result / error / status"| OP["OutputPanel"]
+
+    style WD fill:#1e293b,color:#e2e8f0,stroke:#334155
+    style HookState fill:#1e1b4b,color:#e0e7ff,stroke:#3730a3
+```
 
 ---
 
