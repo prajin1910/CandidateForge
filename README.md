@@ -1,6 +1,7 @@
 # CandidateForge: Multi-Source Candidate Data Transformer
 
-🌍 **Live Demo:** [https://candidateforge.vercel.app/](https://candidateforge.vercel.app/)
+### 🔗 [View Live Application Demo](https://candidateforge.vercel.app/)
+
 CandidateForge is a robust, front-end heavy MERN-stack application (simulating an enterprise-grade backend processing pipeline) designed to consolidate messy, disjointed candidate data from multiple sources into a **Single Source of Truth** (Canonical Profile).
 
 In the real world, HR candidate profiles consist of structured data (JSON/CSV), Resume PDFs, and social media links (GitHub/LinkedIn). CandidateForge extracts, normalizes, resolves conflicts, and securely aggregates these disparate data points into a perfectly validated and cleanly formatted JSON payload ready for database storage.
